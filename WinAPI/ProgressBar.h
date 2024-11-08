@@ -1,0 +1,29 @@
+#pragma once
+#include "GameNode.h"
+
+class ProgressBar : public GameNode
+{
+private:
+	GImage* _progressBarUp;
+	GImage* _progressBarDown;
+
+	RECT _rc;
+	int _x, _y;
+
+	float _width;
+
+public:
+	HRESULT init(int x, int y, int width, int height);
+	void release(void);
+	void update(void);
+	void render(void);
+
+	void setGauge(float currentScore, float maxScore);
+
+	void setX(int x) { _x = x; }
+	void setY(int y) { _y = y; }
+
+	ProgressBar() {}
+	virtual ~ProgressBar() {} //절대 혼자 사용할 수 없기 때문에 반드시 사용한 쪽에서 지워줘야함
+};
+
