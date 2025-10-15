@@ -5,6 +5,7 @@ The Binding of Isaac 스타일의 로그라이크 게임을 Windows API를 사�
 <img width="862" height="638" alt="image" src="https://github.com/user-attachments/assets/85731382-3d9e-4852-ad93-17a84a3619dd" />
 
 ▶️ 게임 플레이 영상 보기
+https://youtu.be/BAIw8pGOYqg?si=YBMTaI8VVswIkmpp
 🎯 프로젝트 소개
 The Binding of Isaac의 핵심 게임플레이를 Win32 API를 활용하여 구현한 2D 로그라이크 액션 게임입니다.
 주요 특징
