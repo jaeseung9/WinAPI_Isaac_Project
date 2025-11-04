@@ -37,7 +37,10 @@ W / A / S / D - 캐릭터 이동
 
 ESC - 게임 종료
 
-📁 프로젝트 구조
+---
+
+## 📁 프로젝트 구조
+```plaintext
 WinAPI_Isaac_Project/
 ├── src/
 │   ├── main.cpp                # 메인 진입점
@@ -62,6 +65,7 @@ WinAPI_Isaac_Project/
 │   ├── Sounds/
 │   └── Data/
 └── README.md
+```
 
 
 🎨 구현 기능
