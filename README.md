@@ -17,7 +17,7 @@
   <li><b>엔진 없이</b> 순수 <b>C++/Win32 API</b>로 루프·렌더링(GDI)·입력·사운드 직접 구현</li>
   <li><b>핵심 기능</b>: 8방향 이동, 4방향 공격, 적 AI, 랜덤 방/씬 전환, 체력 UI, 기본 아이템</li>
   <li><b>설계</b>: Game/Scene/Resource Manager + <code>Scene</code> 추상화 + 싱글톤/상태/프로토타입 패턴</li>
-  <li>자세한 기술/설계는 아래 <a href="#full">📚 원문 상세</a>에 모두 포함 (접기/펼치기)</li>
+  <li>자세한 기술/설계는 아래 <a href="#full">📚 원문 상세</a>에 포함 (접기/펼치기)</li>
 </ul>
 <p><a href="#top">⬆ Back to top</a></p>
 
@@ -36,7 +36,7 @@
   <li><a href="#design">설계 개요 (요약)</a></li>
   <li><a href="#collision">충돌 & 수학 유틸 (요약)</a></li>
   <li><a href="#learned">학습 내용 (요약)</a></li>
-  <li><a href="#full">📚 상세 내용 (전체 본문, 접기/펼치기)</a></li>
+  <li><a href="#full">📚 원문 상세 (전체 본문, 접기/펼치기)</a></li>
 </ol>
 <p><a href="#top">⬆ Back to top</a></p>
 
@@ -66,7 +66,7 @@
 <div>
   <img alt="ingame-2" src="https://github.com/user-attachments/assets/85731382-3d9e-4852-ad93-17a84a3619dd" style="max-width:100%;height:auto;"/>
 </div>
-<p><i>※ GitHub README는 정책상 인라인 동영상 재생이 제한될 수 있습니다. 링크로 시청해주세요.</i></p>
+<p><i>※ README에는 사용 샷만 노출합니다.</i></p>
 <p><a href="#top">⬆ Back to top</a></p>
 
 <hr/>
@@ -77,7 +77,7 @@
   <li>🏃 8방향 이동 & 애니메이션</li>
   <li>🎯 4방향 발사(플레이어 탄환)</li>
   <li>👾 적 생성 & 기본 AI 패턴</li>
-  <li>🚪 방/씬 전환 시스템</li>
+  <li>🚪 랜덤 방/씬 전환 시스템</li>
   <li>❤️ 체력 UI & 💎 기본 아이템 시스템</li>
   <li>🧰 간단 맵툴</li>
 </ul>
@@ -202,106 +202,109 @@ git clone https://github.com/yourusername/WinAPI_Isaac_Project.git
 <hr/>
 
 <!-- Full Detail (merged long content) -->
-<h2 id="full">11) 📚 상세 내용 (전체 본문, 접기/펼치기)</h2>
-<details open>
-  <summary><b>클릭하여 접기/펼치기</b> — 기술 스택/설계/패턴/충돌/씬/빌드 상세 포함</summary>
+<h2 id="full">11) 📚 원문 상세 (전체 본문, 접기/펼치기)</h2>
+<details>
+  <summary><b>클릭하여 펼치기</b> — 기술 스택/설계/패턴/충돌/씬/빌드 상세</summary>
   <br/>
 
   <!-- 사용 기술 스택 -->
   <h3 id="full-stack">A. 사용 기술 스택</h3>
   <ul>
-    <li><b>언어</b>: C++ (표준 C++17 준수). 메모리 관리 등 대부분을 수동으로 처리하여 퍼포먼스와 저수준 제어에 집중.</li>
-    <li><b>플랫폼 &amp; API</b>: Win32 API 기반 개발. 윈도우 생성, 메시지 루프, GDI 2D 렌더링, 키보드 입력(예: <code>WM_KEYDOWN</code>), 타이머, 더블 버퍼링 등 직접 구현.</li>
-    <li><b>그래픽</b>: <b>GDI</b>(Graphics Device Interface)로 2D 블리팅 및 그리기. <code>BitBlt</code>로 백버퍼에 스프라이트를 그린 후 화면에 출력하는 더블 버퍼링 (DirectX/OpenGL 미사용).</li>
-    <li><b>오디오</b>: WinAPI 멀티미디어 API(<code>PlaySound</code>, MCI)로 WAV 재생. 외부 사운드 엔진 없이 Windows 기본 함수 사용.</li>
-    <li><b>IDE &amp; 빌드</b>: Visual Studio 2019/2022. Win32 (x86) Debug/Release 구성으로 Windows 실행 파일(.exe) 생성.</li>
+    <li><b>언어</b>: C++ (표준 C++17 준수). 수동 메모리 관리로 퍼포먼스/저수준 제어.</li>
+    <li><b>플랫폼 &amp; API</b>: Win32 API. 윈도우 생성, 메시지 루프, GDI 2D 렌더링, 키보드 입력(<code>WM_KEYDOWN</code>), 타이머, 더블 버퍼링 직접 구현.</li>
+    <li><b>그래픽</b>: <b>GDI</b> 블리팅. <code>BitBlt</code> 기반 백버퍼 → 화면 더블 버퍼링 (DirectX/OpenGL 미사용).</li>
+    <li><b>오디오</b>: WinMM (<code>PlaySound</code>, MCI)로 WAV 재생.</li>
+    <li><b>IDE &amp; 빌드</b>: Visual Studio 2019/2022. Win32(x86) Debug/Release.</li>
   </ul>
 
   <!-- 객체지향 설계 분석 -->
   <h3 id="full-oop">B. 객체지향 설계 분석</h3>
   <ul>
-    <li><b>클래스 계층 구조</b>: <code>GameObject</code> 추상 기반(위치/속도/충돌 공통) ← <code>Player</code>, <code>Enemy</code>, <code>Bullet</code> 등 상속. 다형성으로 일관된 업데이트/렌더링.</li>
-    <li><b>캡슐화</b>: 멤버는 <code>private</code> 중심, 게터/세터 또는 퍼블릭 메서드로만 접근. 예) <code>Player::TakeDamage(int)</code>.</li>
-    <li><b>SRP</b>: <code>Player</code>(이동/공격), <code>Enemy</code>(AI), <code>SceneManager</code>(화면 전환), <code>GameManager</code>(게임 전체 흐름) 등 단일 책임.</li>
-    <li><b>추상화</b>: <code>Scene</code> 추상 클래스로 상태 전환 로직을 종류와 무관하게 동작. <code>Enemy</code>는 하위 파생형으로 패턴 확장.</li>
-    <li>요약: WinAPI 호출을 C++ 메서드로 캡슐화, 매니저 구조/패턴으로 전역 상태와 전이를 효율 처리.</li>
+    <li><b>클래스 계층</b>: <code>GameObject</code> 추상 기반 ← <code>Player</code>, <code>Enemy</code>, <code>Bullet</code>.</li>
+    <li><b>캡슐화</b>: 내부 상태는 <code>private</code>, 퍼블릭 메서드/게터로만 제어.</li>
+    <li><b>SRP</b>: <code>Player</code>(이동/공격), <code>Enemy</code>(AI), <code>SceneManager</code>(전환), <code>GameManager</code>(루프/전역).</li>
+    <li><b>추상화</b>: <code>Scene</code> 추상으로 상태 전환을 타입과 분리.</li>
   </ul>
 
   <!-- 주요 클래스 역할 -->
-  <h3 id="full-classes">C. 주요 클래스 역할 설명</h3>
+  <h3 id="full-classes">C. 주요 클래스 역할</h3>
   <ul>
-    <li><b>GameManager</b>: 싱글톤. 윈도우 초기화, 게임 루프, 전역 시간/설정, 리소스 로딩/종료 관리 (<code>Init()</code>, <code>Run()</code>).</li>
-    <li><b>SceneManager</b>: 싱글톤. 활성 <code>Scene*</code> 보관, <code>ChangeScene(SceneID)</code>, 루프 내 <code>Update/Render</code> 위임.</li>
-    <li><b>Scene</b> (추상): <code>Update()</code>, <code>Render()</code>, <code>OnEnter()</code>, <code>OnExit()</code> 규약.<br/>
-      <ul>
-        <li><b>MenuScene</b>: 시작 화면/입력 → GameScene 전환.</li>
-        <li><b>GameScene</b>: 플레이/적/탄환 생성 및 관리, 조건 시 GameOver 등으로 전환.</li>
-      </ul>
-    </li>
-    <li><b>Player</b>: 입력 처리, 이동/공격, HP/속도/공격력/방향 상태, 충돌 시 <code>TakeDamage()</code>.</li>
-    <li><b>Enemy</b>: 추적형/발사형 등 AI 구현, 피격/체력 0 시 제거.</li>
-    <li><b>Bullet (Tear)</b>: 위치/속도/공격력, 경계 외/충돌 시 소멸.</li>
-    <li><b>ResourceManager</b>: 이미지/사운드 중앙 관리(맵 캐싱). <code>LoadImage/GetImage</code> 등. 종료 시 일괄 해제.</li>
-    <li><b>Utils/Math</b>: 충돌/거리/각도/난수/보간/타이머 등 공용 유틸.</li>
-    <li>(선택) <b>InputManager</b>, <b>UIManager</b>: 입력 상태/HP 하트·점수 UI 등.</li>
+    <li><b>GameManager</b>: 싱글톤. 초기화/루프/자원 관리.</li>
+    <li><b>SceneManager</b>: 싱글톤. <code>ChangeScene</code>, <code>Update/Render</code> 위임.</li>
+    <li><b>Scene</b> (추상): <code>OnEnter/OnExit/Update/Render</code>. <i>MenuScene, GameScene</i> 등.</li>
+    <li><b>Player/Enemy/Bullet</b>: 입력/AI/투사체 로직과 충돌 반응.</li>
+    <li><b>ResourceManager</b>: 이미지/사운드 캐싱·해제.</li>
+    <li><b>Utils/Math</b>: 충돌/거리/보간/타이머 등.</li>
   </ul>
 
   <!-- 리소스 관리 -->
-  <h3 id="full-res">D. 리소스 관리 방식</h3>
+  <h3 id="full-res">D. 리소스 관리</h3>
   <ul>
-    <li><b>이미지 로딩</b>: 시작/씬 초기화 시 <code>LoadImage/LoadBitmap</code>로 <code>HBITMAP</code> 로드→맵 캐싱→재사용.</li>
-    <li><b>사운드</b>: 효과음 즉시 재생(<code>PlaySound</code>), BGM 루프(MCI). 키-리소스 매핑으로 호출 간소화.</li>
-    <li><b>해제</b>: 종료 시 <code>DeleteObject</code>, <code>PlaySound(NULL,...)</code> 등으로 누수 방지. 백버퍼 DC/비트맵 재사용 후 해제.</li>
-    <li><b>의존 역전</b>: 오브젝트는 파일을 직접 로드하지 않고 매니저에서 핸들을 받아 사용.</li>
+    <li>이미지: <code>LoadImage/LoadBitmap</code> → <code>HBITMAP</code> 캐싱.</li>
+    <li>사운드: 효과음 즉시 재생, BGM 루프.</li>
+    <li>해제: <code>DeleteObject</code>, <code>PlaySound(NULL,...)</code>.</li>
+    <li>의존 역전: 오브젝트는 매니저에서 핸들만 참조.</li>
   </ul>
 
   <!-- 디자인 패턴 -->
-  <h3 id="full-patterns">E. 사용한 디자인 패턴</h3>
+  <h3 id="full-patterns">E. 디자인 패턴</h3>
   <ul>
-    <li><b>싱글톤</b>: Game/Scene/Resource Manager 등 전역 관리.</li>
-    <li><b>상태(State)</b>: <code>Scene</code> 추상 + SceneManager로 메뉴/플레이/오버 전환.</li>
-    <li><b>프로토타입</b> (&amp; 풀링): 적/탄환 반복 생성 시 복제 기반 최적화.</li>
-    <li>(확장) 옵저버: HP 변화 이벤트→UI 반영. 팩토리: ID/문자열로 객체 생성.</li>
+    <li>싱글톤(Manager), 상태(Scene), 프로토타입(+풀링 후보).</li>
+    <li>옵저버/팩토리는 확장 가능.</li>
   </ul>
 
-  <!-- 충돌/수학 유틸 (상세) -->
-  <h3 id="full-collision">F. 충돌 처리 &amp; 수학 유틸리티 구성</h3>
+  <!-- 충돌/수학 유틸 -->
+  <h3 id="full-collision">F. 충돌 &amp; 수학 유틸</h3>
   <ul>
-    <li><b>충돌</b>: AABB 기본, 일부 원형 판정. 빈번 호출 대비 활성 객체만 검사, 삭제 마킹 후 프레임 말 정리.</li>
-    <li><b>벡터/수학</b>: <code>Vector2</code> 연산, 각도→단위 벡터, 거리/보간/Clamp/경계 체크.</li>
-    <li><b>난수</b>: C++ <code>&lt;random&gt;</code> 유틸로 드랍/스폰 등 확률 처리.</li>
-    <li><b>타이머</b>: <code>QueryPerformanceCounter</code> 기반 <code>deltaTime</code>으로 프레임 독립 이동.</li>
+    <li>AABB 기본 + 일부 원형 판정, 활성 객체만 검사, 삭제 마킹 → 프레임 말 정리.</li>
+    <li><code>Vector2</code>, <code>Distance/Clamp/Lerp</code>, <code>QueryPerformanceCounter</code> 기반 <code>deltaTime</code>.</li>
   </ul>
 
   <!-- 씬 관리 -->
-  <h3 id="full-scenes">G. 씬 관리 방식 및 전환 처리</h3>
+  <h3 id="full-scenes">G. 씬 관리</h3>
   <ol>
-    <li><b>구성</b>: <code>Scene</code> 추상 + <code>MenuScene</code>, <code>GameScene</code> (+<i>GameOver/Pause</i> 확장 가능).</li>
-    <li><b>전환</b>: <code>ChangeScene()</code> → <code>OnExit()</code> → 삭제 → 새 씬 생성 → <code>OnEnter()</code> → 포인터 교체.</li>
-    <li><b>루프 연동</b>: <code>Update/Render</code> 위임, 필요 시 프레임 보정/Sleep.</li>
-    <li><b>안정성</b>: 연속 전환 방지 플래그, 스택형 Pause 확장 가능.</li>
+    <li><code>ChangeScene</code>: <code>OnExit</code> → 삭제 → 새 씬 생성 → <code>OnEnter</code>.</li>
+    <li>루프: <code>Update/Render</code> 위임, 필요 시 Sleep으로 FPS 안정화.</li>
+    <li>연속 전환 방지/스택형 Pause는 확장 포인트.</li>
   </ol>
-
-  <!-- 스크린샷 (설명 자리) -->
-  <h3 id="full-screens">H. 스크린샷</h3>
-  <p>주인공/적/UI 요소 포함 예시 화면. (상단 이미지 참고 / 추가 샷 가능)</p>
 
   <!-- 실행 상세 -->
-  <h3 id="full-run">I. 빌드 및 실행 방법 (상세)</h3>
+  <h3 id="full-run">H. 빌드 &amp; 실행 (상세)</h3>
   <ol>
-    <li><b>소스 받기</b>: 저장소를 클론하거나 ZIP 다운로드.</li>
+    <li>저장소 클론/ZIP 다운로드</li>
   </ol>
   <pre><code>bash
-git clone https://github.com/jaeseung9/WinAPI_Isaac_Project.git
+git clone https://github.com/yourusername/WinAPI_Isaac_Project.git
 </code></pre>
   <ol start="2">
-    <li><b>솔루션 열기</b>: Visual Studio 2019+에서 <code>WinAPI_Isaac_Project.sln</code> 오픈.</li>
-    <li><b>환경</b>: Win10 SDK 자동 설정 권장.</li>
-    <li><b>구성/플랫폼</b>: <b>Debug</b> / <b>Win32(x86)</b> 권장 (Release 선택 가능).</li>
-    <li><b>빌드/실행</b>: <b>Build</b> → <b>F5</b> 또는 출력 폴더 .exe 실행.</li>
-    <li><b>종료</b>: 창 닫기([X]) 또는 인게임 Exit. 디버그 모드에서 누수 경고 없으면 해제 정상.</li>
-    <li><b>주의</b>: Windows 전용. WAV 코덱 기본 제공. x64 OS에서도 x86 실행 정상.</li>
+    <li>VS에서 <code>WinAPI_Isaac_Project.sln</code> 열기 → Win32(x86) Debug 또는 Release</li>
+    <li>Build → F5 실행, 종료 시 누수 경고 확인</li>
   </ol>
 
   <p><a href="#top">⬆ Back to top</a></p>
 </details>
+
+<hr/>
+
+<!-- Custom insights for this project -->
+<h2 id="insights">0) 🌱 느낀점 &amp; 설계 의도</h2>
+<ul>
+  <li><b>OS 레벨의 흐름 이해</b>: 엔진 없이 Win32 <b>메시지 루프</b>와 윈도우 라이프사이클을 직접 다루며, 입력/타이밍/렌더링 파이프라인의 상호작용을 몸으로 익혔습니다.</li>
+  <li><b>프레임 독립 업데이트</b>: <code>QueryPerformanceCounter</code>로 <b>deltaTime</b>을 계산해 PC 스펙과 무관한 속도를 유지했습니다. 타이머/슬립 값을 조절하며 FPS 안정화 전략을 실험했습니다.</li>
+  <li><b>자원 수명주기와 누수 방지</b>: <code>HBITMAP/HDC</code>·사운드의 생성/해제 타이밍을 명확히 정의하고, <b>일괄 해제 규칙</b>을 마련해 GDI/메모리 누수를 예방했습니다.</li>
+  <li><b>상태 기반 구조의 장점</b>: <code>Scene</code> 추상 + <code>SceneManager</code>로 <b>상태 패턴</b>을 적용해 메뉴→플레이→결과 전환을 간결하게 유지했고, 신규 씬 추가 비용을 낮췄습니다.</li>
+  <li><b>충돌 처리의 현실과 타협</b>: AABB 중심으로 단순/빠른 충돌을 구현하고, <b>삭제 마킹</b> 후 정리하는 흐름으로 안정성을 확보했습니다. </li>
+</ul>
+<p><a href="#top">⬆ Back to top</a></p>
+
+<hr/>
+
+<!-- Credits -->
+<h2 id="credits">11) 👏 크레딧</h2>
+<p>
+  Author: 서재승 (Seo Jae Seung)<br/>
+  Email: <a href="mailto:seojaeseung9@gmail.com">seojaeseung9@gmail.com</a><br/>
+  Blog: <a href="https://seungcoding.tistory.com/" target="_blank" rel="noreferrer">https://seungcoding.tistory.com/</a><br/>
+  GitHub: <a href="https://github.com/jaeseung9" target="_blank" rel="noreferrer">https://github.com/jaeseung9</a>
+</p>
+<p><a href="#top">⬆ Back to top</a></p>
