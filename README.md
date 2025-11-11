@@ -36,7 +36,9 @@
   <li><a href="#design">설계 개요 (요약)</a></li>
   <li><a href="#collision">충돌 & 수학 유틸 (요약)</a></li>
   <li><a href="#learned">학습 내용 (요약)</a></li>
-  <li><a href="#full">📚 원문 상세 (전체 본문, 접기/펼치기)</a></li>
+  <li><a href="#full">📚 상세 (전체 본문, 접기/펼치기)</a></li>
+  <li><a href="#insights">🌱 느낀점 (전체 본문, 접기/펼치기)</a></li>
+  <li><a href="#credits">👏 크레딧 (전체 본문, 접기/펼치기)</a></li>
 </ol>
 <p><a href="#top">⬆ Back to top</a></p>
 
@@ -287,7 +289,7 @@ git clone https://github.com/yourusername/WinAPI_Isaac_Project.git
 <hr/>
 
 <!-- Custom insights for this project -->
-<h2 id="insights">0) 🌱 느낀점 &amp; 설계 의도</h2>
+<h2 id="insights">12) 🌱 느낀점 &amp; 설계 의도</h2>
 <ul>
   <li><b>OS 레벨의 흐름 이해</b>: 엔진 없이 Win32 <b>메시지 루프</b>와 윈도우 라이프사이클을 직접 다루며, 입력/타이밍/렌더링 파이프라인의 상호작용을 몸으로 익혔습니다.</li>
   <li><b>프레임 독립 업데이트</b>: <code>QueryPerformanceCounter</code>로 <b>deltaTime</b>을 계산해 PC 스펙과 무관한 속도를 유지했습니다. 타이머/슬립 값을 조절하며 FPS 안정화 전략을 실험했습니다.</li>
@@ -300,7 +302,7 @@ git clone https://github.com/yourusername/WinAPI_Isaac_Project.git
 <hr/>
 
 <!-- Credits -->
-<h2 id="credits">11) 👏 크레딧</h2>
+<h2 id="credits">13) 👏 크레딧</h2>
 <p>
   Author: 서재승 (Seo Jae Seung)<br/>
   Email: <a href="mailto:seojaeseung9@gmail.com">seojaeseung9@gmail.com</a><br/>
