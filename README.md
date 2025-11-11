@@ -1,46 +1,107 @@
-🎮 WinAPI Isaac Project
-The Binding of Isaac 스타일의 로그라이크 게임을 Windows API를 사용하여 구현한 프로젝트입니다.
-📺 Demo
-<img width="842" height="624" alt="image" src="https://github.com/user-attachments/assets/dd6ded39-ae05-426e-bc2b-e3d2b62c2ea1" />
-<img width="862" height="638" alt="image" src="https://github.com/user-attachments/assets/85731382-3d9e-4852-ad93-17a84a3619dd" />
+<div id="top"></div>
 
-▶️ 게임 플레이 영상 보기
-https://youtu.be/BAIw8pGOYqg?si=YBMTaI8VVswIkmpp
-🎯 프로젝트 소개
-The Binding of Isaac의 핵심 게임플레이를 Win32 API를 활용하여 구현한 2D 로그라이크 액션 게임입니다.
-주요 특징
+<h1 align="center">🎮 WinAPI Isaac Project — 2D Roguelike (C++/Win32)</h1>
+<p align="center">
+  <b>Win32 API + GDI</b>로 구현한 더블버퍼링 2D 로그라이크 액션 게임<br/>
+  8방향 이동 · 4방향 공격 · 적 AI · 랜덤 방 생성 · 체력/아이템 시스템
+</p>
+<p align="center">
+  <a href="https://youtu.be/BAIw8pGOYqg?si=YBMTaI8VVswIkmpp" target="_blank" rel="noreferrer">▶ YouTube 데모 보기</a>
+</p>
 
-🏃 자유로운 8방향 이동 시스템
-🎯 4방향 공격 메커니즘
-👾 다양한 적 AI 패턴
-🚪 무작위 방 생성 시스템
-💎 아이템 및 파워업 시스템
-❤️ 체력 관리 시스템
+<hr/>
 
-🛠️ 개발 환경
+<!-- TL;DR -->
+<h2 id="tldr">🧭 TL;DR (빠른 소개)</h2>
+<ul>
+  <li><b>엔진 없이</b> 순수 <b>C++/Win32 API</b>로 루프·렌더링(GDI)·입력·사운드 직접 구현</li>
+  <li><b>핵심 기능</b>: 8방향 이동, 4방향 공격, 적 AI, 랜덤 방/씬 전환, 체력 UI, 기본 아이템</li>
+  <li><b>설계</b>: Game/Scene/Resource Manager + <code>Scene</code> 추상화 + 싱글톤/상태/프로토타입 패턴</li>
+  <li>자세한 기술/설계는 아래 <a href="#full">📚 원문 상세</a>에 모두 포함 (접기/펼치기)</li>
+</ul>
+<p><a href="#top">⬆ Back to top</a></p>
 
-Language: C/C++
-API: Win32 API (WinAPI)
-IDE: Visual Studio
-Graphics: GDI/GDI+
+<hr/>
 
-🎮 조작 방법
-이동
+<!-- Table of Contents -->
+<h2 id="toc">📚 Table of Contents</h2>
+<ol>
+  <li><a href="#about">프로젝트 소개</a></li>
+  <li><a href="#demo">데모 & 스크린샷</a></li>
+  <li><a href="#features">주요 특징</a></li>
+  <li><a href="#stack">개발 환경 & 기술 스택 (요약)</a></li>
+  <li><a href="#structure">프로젝트 구조</a></li>
+  <li><a href="#controls">조작 방법</a></li>
+  <li><a href="#run">실행 방법 (요약)</a></li>
+  <li><a href="#design">설계 개요 (요약)</a></li>
+  <li><a href="#collision">충돌 & 수학 유틸 (요약)</a></li>
+  <li><a href="#learned">학습 내용 (요약)</a></li>
+  <li><a href="#full">📚 원문 상세 (전체 본문, 접기/펼치기)</a></li>
+</ol>
+<p><a href="#top">⬆ Back to top</a></p>
 
-W / A / S / D - 캐릭터 이동
+<hr/>
 
-공격
+<!-- About -->
+<h2 id="about">1) 프로젝트 소개</h2>
+<p>
+  <b>The Binding of Isaac</b> 스타일의 2D 로그라이크를 <b>Win32 API</b>로 직접 구현했습니다.
+  윈도우 생성 → 메시지 루프 → 더블 버퍼링 렌더링 → 입력/사운드 처리까지
+  <b>저수준 흐름</b>을 모두 C++로 다룹니다.
+</p>
+<p><a href="#top">⬆ Back to top</a></p>
 
-↑ / ← / ↓ / → (방향키) - 4방향 공격
+<hr/>
 
-기타
+<!-- Demo -->
+<h2 id="demo">2) 데모 & 스크린샷</h2>
+<ul>
+  <li>🎥 <b>YouTube</b>:
+    <a href="https://youtu.be/BAIw8pGOYqg?si=YBMTaI8VVswIkmpp" target="_blank" rel="noreferrer">https://youtu.be/BAIw8pGOYqg?si=YBMTaI8VVswIkmpp</a>
+  </li>
+</ul>
+<div>
+  <img alt="ingame-1" src="https://github.com/user-attachments/assets/dd6ded39-ae05-426e-bc2b-e3d2b62c2ea1" style="max-width:100%;height:auto;"/>
+</div>
+<div>
+  <img alt="ingame-2" src="https://github.com/user-attachments/assets/85731382-3d9e-4852-ad93-17a84a3619dd" style="max-width:100%;height:auto;"/>
+</div>
+<p><i>※ GitHub README는 정책상 인라인 동영상 재생이 제한될 수 있습니다. 링크로 시청해주세요.</i></p>
+<p><a href="#top">⬆ Back to top</a></p>
 
-ESC - 게임 종료
+<hr/>
 
----
+<!-- Features -->
+<h2 id="features">3) 🚀 주요 특징</h2>
+<ul>
+  <li>🏃 8방향 이동 & 애니메이션</li>
+  <li>🎯 4방향 발사(플레이어 탄환)</li>
+  <li>👾 적 생성 & 기본 AI 패턴</li>
+  <li>🚪 방/씬 전환 시스템</li>
+  <li>❤️ 체력 UI & 💎 기본 아이템 시스템</li>
+  <li>🧰 간단 맵툴</li>
+</ul>
+<p><a href="#top">⬆ Back to top</a></p>
 
-## 📁 프로젝트 구조
-```plaintext
+<hr/>
+
+<!-- Stack (summary) -->
+<h2 id="stack">4) 🧱 개발 환경 & 기술 스택 (요약)</h2>
+<ul>
+  <li><b>Language</b>: C/C++ (C++17)</li>
+  <li><b>API</b>: Win32 API (WinAPI), GDI/GDI+</li>
+  <li><b>IDE</b>: Visual Studio 2019/2022</li>
+  <li><b>Graphics</b>: GDI 더블 버퍼링(Back Buffer + BitBlt)</li>
+  <li><b>Audio</b>: WinMM (PlaySound/MCI)</li>
+</ul>
+<p><a href="#full">➡ 상세 스택으로 이동</a></p>
+<p><a href="#top">⬆ Back to top</a></p>
+
+<hr/>
+
+<!-- Structure -->
+<h2 id="structure">5) 📁 프로젝트 구조</h2>
+<pre><code>plaintext
 WinAPI_Isaac_Project/
 ├── src/
 │   ├── main.cpp                # 메인 진입점
@@ -65,240 +126,182 @@ WinAPI_Isaac_Project/
 │   ├── Sounds/
 │   └── Data/
 └── README.md
-```
-
-
-🎨 구현 기능
-✅ 완성된 기능
-
- 플레이어 이동 및 애니메이션
- 4방향 발사 시스템
- 적 생성 및 AI
- 충돌 감지 시스템
- 방 전환 시스템
- 체력 UI
- 기본 아이템 시스템
- 맵툴
- 
-🚀 실행 방법
-요구사항
-
-Windows 10 이상
-Visual Studio 2019 이상 (C++ 개발 환경)
-
-빌드 및 실행
-
-저장소 클론
-
-bashgit clone https://github.com/yourusername/WinAPI_Isaac_Project.git
-
-Visual Studio에서 솔루션 파일 열기
-
-WinAPI_Isaac_Project.sln
-
-빌드 구성 선택 (Debug/Release)
-
-📚 학습 내용
-이 프로젝트를 통해 다음을 학습했습니다:
-
-Win32 API를 활용한 게임 루프 구현
-GDI를 이용한 2D 그래픽 렌더링
-게임 오브젝트 관리 및 디자인 패턴
-충돌 감지 알고리즘
-메모리 관리 및 최적화
-
-사용 기술 스택
-
-언어: C++ (표준 C++17 준수). 메모리 관리 등 대부분을 수동으로 처리하여 퍼포먼스와 저수준 제어에 집중했습니다.
-
-플랫폼 & API: Win32 API (Windows API) 기반 개발. WinAPI를 사용하여 윈도우 생성, 메시지 루프, GDI를 이용한 2D 그래픽 렌더링을 구현했습니다. 추가로, 키보드 입력 처리(WM_KEYDOWN 등)나 타이머, 더블 버퍼링 등도 WinAPI로 직접 다룹니다.
-
-그래픽: **GDI (Graphics Device Interface)**를 사용해 2D 이미지 블릿(blit) 및 그리기를 수행했습니다. BitBlt 등을 활용하여 백버퍼에 스프라이트를 그린 후 화면에 출력하는 방식으로 더블 버퍼링을 구현했습니다. (별도의 DirectX/OpenGL 라이브러리는 사용하지 않음)
-
-오디오: WinAPI의 멀티미디어 API(PlaySound, MCI) 등을 이용하여 WAV 등 소리 파일 재생을 구현했습니다. 작은 규모 프로젝트로써 경량 구현을 위해 외부 사운드 엔진 없이 Windows 기본 함수를 사용했습니다.
-
-IDE 및 빌드: Visual Studio 2019/2022를 이용하여 개발 및 디버깅을 진행했습니다. 프로젝트 설정은 Win32 (x86) Debug/Release 구성으로, Windows 운영체제에서 실행 가능한 exe를 생성합니다.
-
-객체지향 설계 분석
-
-이 프로젝트는 객체지향 프로그래밍(OOP) 설계를 적극 활용하여 유지보수성과 확장성을 높였습니다. 주요 설계 원칙과 구조는 다음과 같습니다:
-
-클래스 계층 구조: 게임 내 모든 개체들은 공통된 기반 클래스를 통해 정의됩니다. 예를 들어, Object 또는 GameObject라는 추상 기반 클래스를 만들어 위치, 속도, 충돌 판정 등의 공통 요소를 포함하고, Player, Enemy, Bullet 등이 이를 상속합니다. 이를 통해 다형성(polymorphism)을 활용하여 객체들을 일관된 방식으로 관리하고 업데이트/렌더링할 수 있습니다.
-
-캡슐화: 각 클래스는 자신만의 데이터와 동작을 잘 캡슐화하고 있습니다. 멤버 변수는 주로 private으로 숨기고, 필요 시 게터/세터 또는 public 메서드를 통해서만 접근합니다. 예를 들어 Player 클래스는 현재 체력, 위치 등을 내부적으로 관리하며, 외부에서는 TakeDamage(int amount) 같은 메서드로만 플레이어 상태를 변경하도록 구현되었습니다.
-
-단일 책임 원칙 (SRP): 클래스마다 하나의 역할에 집중하도록 설계했습니다. Player는 플레이어 캐릭터의 이동 및 공격 로직만 담당하고, Enemy는 적 개체의 AI 및 행동만 담당합니다. 화면 전환은 SceneManager가, 게임 전체 흐름 관리는 GameManager가 맡는 등 각 클래스가 명확한 책임을 가지도록 분리했습니다. 이러한 구조로 각 모듈이 서로 최소한으로 의존하고, 수정이 필요한 경우 해당 클래스만 수정하면 되도록 하였습니다.
-
-추상화와 유연성: 게임 로직의 여러 부분에서 추상 클래스를 통해 구현 상세를 분리했습니다. 예를 들어, Scene이라는 인터페이스(추상 클래스)를 정의하고 메뉴, 게임, 종료 등의 개별 씬이 이를 구현하도록 하여 상태 전환(씬 전환) 로직이 구체적인 씬 종류에 상관없이 동작하도록 추상화했습니다. 마찬가지로 Enemy도 다양한 적 유형이 있을 수 있어, 기본 적 행동을 정의한 후 필요하면 파생 클래스로 특정 패턴을 구현할 수 있게 했습니다.
-
-요약하면, 본 프로젝트의 구조는 게임 루프와 엔티티 관리를 객체 단위로 나누고, WinAPI의 함수 호출들을 캡슐화하여 C++ 클래스 메서드로 표현함으로써 유지보수성과 확장성을 고려한 설계를 보여줍니다. 또한 디자인 패턴(싱글톤, 상태 패턴 등)을 적절히 활용하여 전역 상태 관리와 상태 전이를 효율적으로 처리합니다.
-
-주요 클래스 역할 설명
-
-프로젝트의 핵심 클래스를 소개하면 다음과 같습니다:
-
-GameManager: 게임의 전역 관리 클래스입니다. **싱글톤(Singleton)**으로 구현되어 게임 내 어디서든 접근할 수 있는 전역 인스턴스로 동작합니다. 메인 윈도우 초기화, 게임 루프 실행, 전역 시간 관리 등을 담당하며, GameManager::Init()에서 WinAPI 윈도우 생성 및 리소스 로딩을 수행하고, GameManager::Run()에서 메인 메시지 루프와 함께 각 프레임의 업데이트/렌더링을 호출합니다. 또한 게임 종료 처리나 전역 설정 값(화면 크기 등)도 관리합니다.
-
-SceneManager: 씬(장면)을 전환하고 관리하는 클래스입니다. 역시 싱글톤으로 설계되어 있으며, 내부에 현재 활성화된 Scene 객체에 대한 포인터를 유지합니다. SceneManager::ChangeScene(SceneID id) 메서드를 통해 현재 씬을 안전하게 종료하고 새로운 씬을 생성/초기화합니다. 게임 루프 내에서 SceneManager::Update()와 Render()를 호출하면, 현재 활성 씬의 동명 메서드를 대신 실행해주는 상태 패턴 역할을 합니다. 이 클래스 덕분에 메뉴, 게임 플레이, 일시정지, 게임 오버 등 다양한 상태 전환이 원활하게 구현됩니다.
-
-Scene (추상 클래스): 개별 씬들의 기본 인터페이스입니다. Update()와 Render() 같은 순수 가상 함수를 정의하여 각 씬 클래스가 반드시 구현하도록 합니다. 또한 OnEnter(), OnExit() 등을 두어 씬 시작시 자원 로드나 종료시 해제를 처리하도록 했습니다. 이를 상속받은 구체적인 씬으로 MenuScene, GameScene 등이 있으며:
-
-MenuScene: 게임 시작 화면 메뉴를 구현한 씬으로, 키 입력을 받아 게임 시작(Scene 전환) 등을 처리합니다.
-
-GameScene: 실제 게임 플레이 로직이 담긴 핵심 씬입니다. 플레이어, 적, 탄환 등을 생성 및 관리하고, 매 프레임마다 이 객체들의 Update/Render를 호출하여 게임이 진행되도록 합니다. 또한 일정 조건(플레이어 사망 등)에서 SceneManager를 통해 GameOverScene 등으로 전환을 요청합니다.
-
-(필요 시 기타 Scene 예: PauseScene, GameOverScene 등으로 확장 가능)
-
-Player: 플레이어 캐릭터를 나타내는 클래스입니다. Object 또는 Character 기반 클래스를 상속하며, 사용자 입력 처리, 이동 및 공격 동작을 구현합니다. 내부적으로 현재 HP, 속도, 공격력, 방향 등 플레이어 상태를 가지고 있습니다. Update() 메서드에서 키보드 입력(WASD 등)을 감지하여 위치를 변경하고, 공격 키 입력(예: 스페이스바 등)에 따라 탄환(Bullet) 객체을 생성하여 발사합니다. 또한 적과의 충돌 체크를 통해 피격 시 TakeDamage()로 HP를 감소시키고 무적 시간 처리 등의 플레이어 고유 로직을 수행합니다.
-
-Enemy: 적 캐릭터를 표현하는 클래스입니다. 기본적으로 플레이어와 유사한 방식으로 Object 기반 클래스에서 파생되며, 여러 적 종류가 있을 수 있습니다. 예를 들어 추적형 적, 발사형 적 등 패턴에 따라 Enemy를 상속받은 하위 클래스(예: ChaserEnemy, ShooterEnemy)로 다르게 동작합니다. 각 Enemy는 Update()에서 자신만의 AI를 수행하는데, 단순히 플레이어 방향으로 이동하거나 일정 시간마다 발사체를 발사하는 등의 로직이 구현되어 있습니다. Enemy 객체는 Player와의 충돌 시 또는 플레이어 탄환과의 충돌 시 OnHit()을 통해 체력을 줄이고, 체력이 0이 되면 제거됩니다.
-
-Bullet (Tear): 플레이어나 적이 발사하는 탄환 객체입니다. Isaac 원작의 눈물(tear)을 모사하여 생성된 방향으로 직진하는 작은 투사체로 볼 수 있습니다. Bullet 클래스는 위치와 속도, 공격력 등을 갖고, 화면 경계를 벗어나거나 충돌 시 소멸됩니다. Update()에서 자신의 위치를 이동시키고 Render()로 스프라이트를 그립니다. 충돌 판정은 PlayerBullet vs Enemy, EnemyBullet vs Player 등으로 구분하여 처리됩니다.
-
-ResourceManager (또는 ImageManager/SoundManager 등): 리소스 관리용 클래스입니다. 게임에 사용되는 모든 이미지와 사운드 자원을 미리 로드하고 보관하는 역할을 합니다. 보통 맵(std::map 등)을 사용하여 문자열 키(또는 enum)와 로드된 객체(HBITMAP, 소리 버퍼 등)를 매핑해둡니다. 예를 들어 ResourceManager::LoadImage("player", "Image/player.bmp") 형태로 이미지를 로드해두고, 다른 곳에서 ResourceManager::GetImage("player")로 불러와 사용합니다. 이 클래스도 싱글톤으로 구현되어 어디서든 접근 가능하며, 메모리 관리 측면에서 게임 종료 시 모든 로드된 리소스를 해제(DeleteObject, sndPlaySound 종료 등)하여 리소스 누수를 방지합니다.
-
-Utils / Math 유틸리티: 게임 개발에 필요한 여러 수학 함수나 보조 기능을 모아놓은 정적 클래스나 네임스페이스입니다. 예를 들어 충돌 판정 함수(Axis-Aligned Bounding Box 충돌 체크인 bool CheckRectCollision(Rect a, Rect b) 또는 원형 범위 충돌 bool CheckCircleCollision(x1,y1,r1, x2,y2,r2) 등), 그리고 랜덤 넘버 생성기, 각도-벡터 변환, 속도 보간 등의 함수가 제공됩니다. 이러한 유틸리티는 객체들 간 충돌 처리나 움직임 계산에 사용되어 코드 중복을 줄이고 가독성을 높입니다.
-
-그 외에도, InputManager(키 입력 상태 관리), UIManager(화면 UI 요소 관리) 등이 구현되어 있을 수 있습니다. 예를 들어 UIManager는 플레이어의 남은 체력 하트 표시나 획득 아이템, 점수 등을 화면에 출력하는 역할을 담당합니다. 이러한 매니저들도 주로 싱글톤으로 구현되어 전역적으로 관리됩니다.
-
-리소스 관리 방식
-
-이미지와 사운드 리소스 관리에 있어, 본 프로젝트는 중앙 집중식 로딩 및 캐싱 전략을 취하고 있습니다:
-
-이미지 로딩: 게임 시작 시 또는 각 씬 초기화 단계에서 게임에 필요한 .bmp 스프라이트들을 모두 로드합니다. WinAPI의 LoadImage 함수나 LoadBitmap 등을 사용하여 HBITMAP 객체로 로드한 뒤, Device Context(DC)에 셋업하거나 BITMAP 구조체로 픽셀 데이터를 얻어둡니다. 이러한 로드된 이미지들은 앞서 언급한 ResourceManager(ImageManager)의 **컨테이너(Map)**에 저장되어, 게임 진행 중 필요할 때마다 디스크에 재로드 없이 곧바로 사용됩니다. 예를 들어, 플레이어 캐릭터 이미지, 적 스프라이트 시트, 배경 타일 등이 키(Key)로 식별되어 메모리에 상주하게 됩니다. 이 방식으로 디스크 I/O를 최소화하고, 동일 자원의 반복 로딩에 따른 성능 저하를 방지합니다.
-
-사운드 로딩/재생: 사운드 역시 게임 시작 시 필요한 효과음을 메모리에 미리 읽어두거나(LoadWave 등의 커스텀 함수), 혹은 필요 시 PlaySound 함수로 즉시 재생합니다. Windows 멀티미디어 API를 사용하여 BGM(배경 음악)은 루프 재생하고, 효과음은 비동기로 재생되도록 구현했습니다. SoundManager에서 Play("explosion")처럼 호출하면 등록된 "explosion.wav" 사운드를 재생하도록 맵핑되어 있습니다. WAV 파일은 용량이 크지 않기 때문에, 작은 효과음은 리소스로 임베드해두거나 미리 로드하고, BGM은 MCI 명령어로 스트리밍 재생합니다.
-
-메모리 관리: 리소스 관리 클래스는 싱글톤으로 전역에서 관리되며, 씬 전환 시 필요한 리소스만 남기고 언로드하거나, 게임 종료 시 ReleaseAll() 메서드를 통해 모든 자원을 해제합니다. GDI로 로드한 HBITMAP은 DeleteObject를 호출하여 반환하고, 사운드는 PlaySound(NULL, ...) 등으로 정지시킨 후 메모리를 해제합니다. 이처럼 명시적인 해제를 통해 메모리 누수와 GDI자원 누수가 없도록 신경 썼습니다. 또한 더블 버퍼링용 백버퍼 DC와 비트맵도 전역으로 하나만 생성하여 재사용하고, 게임 루프 끝에서 해제합니다.
-
-리소스 사용 구조: 각 게임 오브젝트는 필요한 리소스를 직접 파일에서 로드하지 않습니다. 대신 ResourceManager로부터 핸들 또는 포인터를 받아와 사용합니다. 예를 들어, Player 객체는 생성 시 playerImage = ResourceManager::GetImage("player") 형태로 자신의 스프라이트를 가져오며, Render()에서 이 비트맵을 화면 DC에 그려줍니다. 이렇게 함으로써 의존성 역전이 일어나 리소스의 생명주기와 관리가 일원화되고, 개별 객체들은 로직에 집중할 수 있게 됩니다.
-
-요약하면, 모든 리소스를 한 곳에서 관리하여 성능과 유지보수를 모두 잡았으며, 필요 이상으로 반복 로드하거나 중복 저장하지 않도록 설계되었습니다.
-
-사용한 디자인 패턴
-
-본 게임 프로젝트에서는 소프트웨어 디자인 패턴을 적절히 적용하여 코드의 구조를 개선했습니다. 사용된 핵심 패턴들은 다음과 같습니다:
-
-싱글톤 패턴 (Singleton): 전역적으로 단 하나만 존재해야 하는 관리 클래스들에 적용했습니다. GameManager, SceneManager, ResourceManager 등은 싱글톤으로 구현되어 어디서든 쉽게 접근할 수 있으며, 불필요한 다중 생성이나 복사를 방지했습니다. 예를 들어, GameManager::GetInstance()를 통해 게임의 공용 인스턴스를 얻어 초기화나 루프 제어를 하고, 다른 곳에서 동일한 인스턴스에 접근해 상태를 확인하거나 변경합니다. 싱글톤은 전역 변수를 사용하지 않으면서도 전역적인 접근성을 부여해주어 입력 관리, 사운드 관리 등에도 활용했습니다.
-
-상태 패턴 (State Pattern): 게임의 다양한 상태(씬) 전환에 활용했습니다. 앞서 설명한 대로 Scene 추상 클래스와 SceneManager를 도입하여, 현재 상태(씬)에 따라 게임 루프 실행 동작이 달라지도록 했습니다. SceneManager는 현재 Scene 객체에 대한 포인터를 갖고 있고, 게임 진행 중 SceneManager::Update()를 호출하면 내부에서 현재 Scene의 Update를 위임 호출합니다. 새로운 상태로의 전환이 필요하면 SceneManager가 현재 객체를 삭제하고 새로운 Scene 객체를 할당하는 식으로 상태 객체 교체를 수행합니다. 이를 통해 게임은 메뉴 -> 플레이 -> 게임오버 등의 상태 변화 로직을 if/else나 switch문 없이 캡슐화하여 관리합니다. 즉, 각 씬이 하나의 상태 객체이며, SceneManager가 컨텍스트 역할을 하는 전형적인 상태 패턴 구조입니다.
-
-프로토타입 패턴 (Prototype Pattern): 적이나 총알 등 반복적으로 생성되어야 하는 객체들에 적용되었습니다. 예컨대, 동일한 속성을 가진 적이 다수 필요한 경우, 하나의 기본 Enemy 객체(프로토타입)를 미리 생성해 두고 이를 복제(clone)하여 새로운 적을 만드는 방식을 사용했습니다. 이를 위해 Enemy 클래스에 Clone() 메서드를 구현하거나, 복사를 지원하도록 설계했습니다. 이 패턴을 이용하면 객체를 생성할 때 비용이 큰 초기화를 매번 반복하지 않고, 기본 상태를 복사해서 빠르게 다수의 객체를 만들 수 있습니다. 본 프로젝트에서는 탄환(Bullet) 생성 시에도 프로토타입 패턴 아이디어를 활용할 수 있습니다. 플레이어가 발사할 기본 Bullet 객체 템플릿을 두고, 공격 시 해당 템플릿을 복제하여 새로운 탄환을 만들어내면 매번 초기화할 필요 없이 값만 변경하여 효율적으로 객체를 생성합니다. 이러한 프로토타입 방식은 **객체 풀링(pooling)**과 함께 사용되어 메모리 재활용에도 유리합니다. (예: 소멸된 탄환 객체를 삭제 대신 비활성 상태로 두었다가 나중에 재사용)
-
-그 외 패턴: 이 밖에도 작은 규모의 패턴들이 일부 사용되었습니다. 예를 들어, Observer Pattern(옵저버 패턴)은 특정 상황에서 UI 업데이트 등에 응용될 수 있습니다. 플레이어의 HP 변화나 아이템 획득 시 UI 화면의 하트 갯수나 점수를 갱신하는데, 이를 직접 호출하지 않고 이벤트를 발행하고 UIManager가 구독하여 처리하는 방식을 염두에 두었습니다. (현재 구현에서 직접 적용하지 않았다면 추후 확장 가능함을 고려)
-또한 팩토리 패턴은 프로토타입과 유사한 맥락에서, 문자열이나 ID로 객체를 생성하는 데 활용되었습니다. 예를 들어 EnemyFactory를 만들어 "Goblin" 문자열을 넣으면 Goblin 적 객체를 리턴하도록 하면 코드의 가독성이 올라갑니다. 이 패턴은 현재 구현에 부분적으로 응용되었을 가능성이 있습니다 (예: SceneManager 내부에서 씬 전환 시 enum 값을 받아 해당 씬 객체를 생성하는 로직은 간이 팩토리 구현으로 볼 수 있습니다).
-
-이렇듯 디자인 패턴의 활용으로 코드 구조가 체계적이고 확장에 대비되어 있습니다. 싱글톤으로 전역 상태를 관리하고, 상태 패턴으로 게임 진행 흐름을 관리하며, 프로토타입/팩토리로 객체 생성 비용을 낮추고 구조화한 점이 이 프로젝트의 기술적 포인트입니다.
-
-충돌 처리 및 수학 유틸리티 구성 방식
-
-액션 슈팅 게임이기 때문에 **충돌 감지(Collision Detection)**는 매우 중요한 요소입니다. 본 프로젝트에서는 단순하면서도 효과적인 충돌 처리와 여러 수학적 유틸리티를 구현하여 사용했습니다:
-
-충돌 처리: 주로 축 정렬 경계 박스(AABB, Axis-Aligned Bounding Box) 방식을 사용했습니다. 각 객체(플레이어, 적, 탄환)의 현재 위치와 스프라이트 크기를 바탕으로 사각형(Rect) 영역을 정의하고, IntersectRect 또는 직접 판별을 통해 두 사각형이 겹치는지 확인합니다. 예를 들어, 매 프레임마다 Player와 모든 Enemy의 충돌을 체크하여 겹칠 경우 플레이어 피해 처리를, Bullet과 Enemy의 충돌을 체크해 명중 시 적 체력 감소 및 탄환 소멸 처리를 합니다.
-경우에 따라 원형 범위 충돌(원거리 거리 기반)도 사용되는데, 일부 적 패턴(예: 폭발 범위)이나 시야 판정은 원 중심 거리를 계산하여 반경 이내인지로 판정했습니다. 이를 위해 Distance(x1,y1, x2,y2) 함수를 구현해 두고 활용합니다.
-충돌 처리가 자주 일어나므로, 이중 루프 순회 최적화에도 신경썼습니다. 예를 들어, 탄환과 적 충돌은 활동 중인 탄환 리스트와 적 리스트를 이중 loop로 도는 식이나, 필요하면 공간 분할(쿼드트리 등)까지는 아니더라도 최소한 화면 영역을 구획짓거나 활성 객체만 검사하여 부하를 줄였습니다.
-
-물리 및 수학 유틸리티: 간단한 2D 게임 물리 효과를 위해 몇 가지 유틸 함수들을 구현했습니다.
-
-벡터 연산: Vector2 구조체를 정의하여 위치, 속도를 벡터로 취급하고, 덧셈/뺄셈, 스칼라 곱 등을 연산자 오버로딩으로 지원했습니다. 이를 통해 방향 단위 벡터에 속도를 곱해 매 프레임 이동량을 구하는 등 깔끔한 물리 계산이 가능합니다. 또한 각도(deg/rad)로 단위 벡터를 구하는 함수도 있어, 특정 각도로 탄환을 발사하거나 적이 플레이어 방향으로 회전하는 데 사용했습니다.
-
-난수 생성: 게임 디자인 상 랜덤 요소가 있을 경우를 대비해 C++ <random> 라이브러리를 이용하여 난수 유틸을 만들었습니다. 예를 들어 적의 아이템 드랍 여부 결정, 혹은 적 스폰 위치를 랜덤하게 결정하는데 GetRandomInt(min, max) 등의 함수를 사용할 수 있습니다.
-
-프레임당 시간 계산: WinAPI의 QueryPerformanceCounter 등을 사용해 고해상도 타이머를 구현, deltaTime을 구해 물체 이동에 활용했습니다. 이로써 다른 PC 환경에서도 게임 속도가 일정하게 유지되도록 했습니다. 만약 초당 60프레임 기준으로 구현했다면, deltaTime을 곱해 프레임 레이트에 비례한 이동을 적용합니다.
-
-기타 유틸: 그 밖에 각종 보조 기능으로, 화면 영역 밖으로 나간 객체를 쉽게 판단하는 IsOutOfBounds(x,y) 함수, 값을 특정 범위로 제한하는 Clamp(value, min, max), 선형 보간(LERP) 함수 등이 구현되어 있습니다. 이러한 함수들은 Utils 혹은 Math 헬퍼에 모아두어 코드 가독성을 높이고 중복을 줄였습니다.
-
-충돌 처리 흐름: 실제 게임 루프에서는 다음과 같이 동작합니다. GameScene::Update()에서:
-
-모든 게임 객체에 대해 위치 업데이트 (Player 움직임, Enemy 이동, Bullet 비행 등).
-
-충돌 체크 단계에서, 다중 for-loop을 돌며 각 필요한 쌍(P vs E, P vs EnemyBullet, Bullet vs E 등)을 검사.
-
-충돌이 확인되면 해당 객체들에 정의된 충돌 처리 루틴을 호출. (Player가 Enemy와 부딪힌 경우 Player의 OnCollision()에서 체력 감소, Enemy의 OnCollision()에서 필요 시 반응 등)
-
-체력이 0이 된 객체는 리스트에서 제거(mark for deletion)하고, 화면에 더 이상 그리지 않음.
-
-모든 처리가 끝나면 다음 프레임으로 넘어감.
-
-이 때 유효하지 않은 객체에 대한 참조를 방지하기 위해, 충돌로 제거될 객체를 즉시 삭제하지 않고 일단 플래그를 마킹한 뒤, 해당 프레임 업데이트를 끝낸 후 일괄 삭제하는 방법을 썼습니다. 또는 리스트를 역순 순회하며 remove하는 등의 기법을 활용했습니다.
-
-전반적으로, 수학 유틸과 충돌 관리는 복잡도는 낮지만 빈번한 연산들이므로 최대한 단순하게 구현하였고, 정확성과 성능 사이에서 균형을 맞추었습니다. 작은 프로젝트 규모상 현재 충돌 처리 방식으로도 충분한 성능을 내지만, 향후 적 개체 수가 늘어난다면 쿼드트리 등 알고리즘 개선도 고려할 수 있습니다.
-
-씬(Scene) 관리 방식 및 전환 처리 흐름
-
-씬 관리는 게임의 흐름을 제어하는 핵심으로, 본 프로젝트에서는 장면 전환 시스템을 구축하여 시작 화면, 게임 플레이, 게임 오버 등의 화면을 부드럽게 오갈 수 있도록 했습니다.
-
-씬 구성: 앞서 설명된 대로 추상 클래스 Scene을 상속한 여러 구체 씬 클래스로 구성됩니다. 대표적으로:
-
-MenuScene – 게임 시작 메뉴 (타이틀 화면). 보통 Update()에서 Enter 입력을 감지해 GameScene으로 넘어가도록 SceneManager::ChangeScene(GameScene)을 호출합니다.
-
-GameScene – 실제 게임이 진행되는 씬. 플레이어와 적 생성, 게임 루프 로직 담당.
-
-GameOverScene – 게임 종료 후 점수 표시나 재시작 여부 입력 대기 등 (필요시 구현).
-
-씬 전환 흐름: SceneManager의 ChangeScene(newSceneID) 함수가 호출되면, 다음과 같은 절차로 전환합니다:
-
-현재 씬 종료: 현재 활성화된 Scene 객체의 OnExit() 메서드를 호출하여 씬에서 사용한 리소스(예: 해당 씬에만 쓰이는 이미지나 사운드) 해제, 일시정지된 음악 정지 등 정리 작업을 합니다.
-
-메모리 정리: 현재 씬 객체를 delete하여 메모리에서 제거합니다. (또는 SceneManager가 이전 씬을 포인터로 계속 가지고 있고, 나중에 덮어쓰면서 자동 삭제되도록 스마트포인터를 사용할 수도 있습니다.)
-
-새 씬 생성: 인자로 받은 Scene ID에 따라 switch문이나 팩토리 패턴으로 새로운 Scene 객체를 생성합니다. 예를 들어 SceneID::GAME이면 new GameScene()을 생성합니다.
-
-초기화: 새로 생성된 씬 객체의 OnEnter()를 호출합니다. 여기서는 해당 씬에서 필요한 오브젝트 생성 (예: GameScene이면 플레이어, 적 배치), 씬별 BGM 재생, 초기 UI 설정 등을 수행합니다.
-
-씬 교체: SceneManager가 보관하는 현재 씬 포인터를 새 씬으로 교체합니다. 이제 이후부터는 SceneManager::Update/Render가 새 씬의 것을 호출하게 됩니다.
-
-메인 루프와 씬 연계: GameManager::Run()의 게임 루프에서는 매 프레임 다음 작업을 합니다:
-
-Windows 메시지 처리 (PeekMessage/TranslateMessage/DispatchMessage 등) – 윈도우 종료나 입력 이벤트를 큐에서 처리.
-
-Update 단계: SceneManager::Update() 호출 -> 내부적으로 현재 Scene의 Update() 실행. 여기서 게임 객체들의 움직임, 충돌 처리, 게임 상태 변화를 계산.
-
-Render 단계: SceneManager::Render() 호출 -> 현재 Scene의 Render() 실행. 여기서 GDI를 이용해 백버퍼 DC에 모든 오브젝트와 UI를 그리고, 최종적으로 화면 DC에 블트(BitBlt)하여 한 프레임을 화면에 나타냅니다.
-
-FPS 조절: (선택) 타이머를 체크해 필요하면 휴식 (Sleep) 하여 프레임레이트 유지.
-
-루프 반복 – WM_QUIT 메시지가 올 때까지 1~4 반복.
-
-SceneManager가 중간에 Scene을 교체하면, 다음 루프 사이클부터는 새로운 Scene의 Update/Render가 호출되므로, 자연스럽게 장면 전환이 이루어집니다. 전환 시 화면 전환 효과(페이드인/아웃 등)는 구현되어 있지 않지만, 필요한 경우 SceneManager 수준에서 간단한 페이드 효과(검은 화면 Overlay) 후 씬 교체를 하는 식으로 추가할 수 있습니다.
-
-전환 시 고려사항: 빠른 키입력 등으로 씬이 연속 전환되는 것을 방지하기 위해, SceneManager는 이중 전환 방지 플래그를 둘 수 있습니다. 예를 들어 한 씬에서 ChangeScene을 호출한 뒤에는 그 다음 Update까지 추가 입력을 무시하거나, SceneManager가 현재 전환 중임을 나타내는 상태를 관리합니다. 현재 프로젝트 규모에서는 크게 문제될 부분은 아니지만, 이러한 안정성 고려도 염두에 두었습니다.
-
-Pause 처리: 만약 일시정지(Pause)를 구현했다면, SceneManager가 스택(stack) 형태로 씬을 관리하도록 확장할 수 있습니다. 즉, 현재 Scene 위에 PauseScene을 push하여 입력은 PauseScene이 받되, 그 아래 GameScene 상태는 유지한 채로 Render만 계속 그리는 방식을 활용 가능합니다. 본 프로젝트에서는 기본적으로 단일 active 씬만 관리하지만, 확장성을 염두에 두고 설계되어 있습니다.
-
-정리하면, 씬 관리 시스템은 게임 루프와 긴밀히 연동되어 상태 전환을 부드럽게 처리하며, 각 씬을 모듈화함으로써 코드 구조를 명확히 했습니다. 새로운 씬을 추가하는 것도 SceneManager에 한 줄 추가하는 것으로 가능하므로, 게임 기능 확장이 용이합니다.
-
-스크린샷
-
-아래는 게임 플레이 화면의 예시 스크린샷입니다 (주인공 캐릭터와 적, UI 요소 등을 포함).
-
-(스크린샷 이미지 추후 추가 예정)
-
-빌드 및 실행 방법
-
-이 프로젝트는 Visual Studio를 통해 컴파일하고 실행할 수 있습니다. Windows 환경에서의 빌드 절차는 다음과 같습니다:
-
-소스 받기: 이 저장소를 로컬로 클론하거나 ZIP으로 다운로드 받습니다.
-
+</code></pre>
+<p><a href="#top">⬆ Back to top</a></p>
+
+<hr/>
+
+<!-- Controls -->
+<h2 id="controls">6) 🎮 조작 방법</h2>
+<ul>
+  <li><b>이동</b>: <code>W / A / S / D</code></li>
+  <li><b>공격</b>: <code>↑ / ← / ↓ / →</code> (방향키)</li>
+  <li><b>종료</b>: <code>ESC</code></li>
+</ul>
+<p><a href="#top">⬆ Back to top</a></p>
+
+<hr/>
+
+<!-- Run (summary) -->
+<h2 id="run">7) 💻 실행 방법 (요약)</h2>
+<p><b>요구사항</b></p>
+<ul>
+  <li>Windows 10 이상</li>
+  <li>Visual Studio 2019 이상 (C++ 개발 도구)</li>
+</ul>
+
+<p><b>빌드 & 실행</b></p>
+<pre><code>bash
+git clone https://github.com/yourusername/WinAPI_Isaac_Project.git
+</code></pre>
+<ol>
+  <li>Visual Studio에서 <code>WinAPI_Isaac_Project.sln</code> 열기</li>
+  <li>구성: <b>Debug</b> / 플랫폼: <b>Win32(x86)</b> 확인</li>
+  <li><b>Build</b> → <b>F5</b> 실행 (또는 출력 폴더의 exe 실행)</li>
+</ol>
+<p><a href="#full">➡ 실행 상세로 이동</a></p>
+<p><a href="#top">⬆ Back to top</a></p>
+
+<hr/>
+
+<!-- Design (summary) -->
+<h2 id="design">8) 🧩 설계 개요 (요약)</h2>
+<ul>
+  <li><b>OOP 계층</b>: <code>GameObject</code>(위치/충돌 공통) ← <code>Player/Enemy/Bullet</code></li>
+  <li><b>Manager</b>: <code>GameManager</code>(루프/전역), <code>SceneManager</code>(상태/씬), <code>ResourceManager</code>(이미지/사운드)</li>
+  <li><b>패턴</b>: 싱글톤(전역 접근), 상태(씬 전환), 프로토타입/팩토리(반복 생성 최적화, 필요 시 풀링)</li>
+  <li><b>리소스</b>: 중앙집중 로딩/캐싱 → 재사용, 종료 시 일괄 해제(메모리/GDI 누수 방지)</li>
+  <li><b>렌더링</b>: 백버퍼 DC에 그린 뒤 화면으로 <code>BitBlt</code> (플리커 최소화)</li>
+</ul>
+<p><a href="#top">⬆ Back to top</a></p>
+
+<hr/>
+
+<!-- Collision (summary) -->
+<h2 id="collision">9) ⚙️ 충돌 & 수학 유틸 (요약)</h2>
+<ul>
+  <li><b>충돌</b>: AABB 사각 충돌 기본, 일부 원형(반경) 판정 보조</li>
+  <li><b>최적화</b>: 활성 객체만 검사, 충돌 후 즉시 삭제 대신 마킹 → 프레임 말에 정리</li>
+  <li><b>유틸</b>: <code>Vector2</code>, <code>Distance/Clamp/Lerp</code>, 경계 체크, 난수, 고해상도 타이머(<code>QueryPerformanceCounter</code>)</li>
+</ul>
+<p><a href="#top">⬆ Back to top</a></p>
+
+<hr/>
+
+<!-- Learned -->
+<h2 id="learned">10) 📖 학습 내용 (요약)</h2>
+<ul>
+  <li>Win32 <b>메시지 루프/윈도우 라이프사이클</b></li>
+  <li><b>GDI 더블 버퍼링</b>과 스프라이트 블리팅</li>
+  <li><b>객체지향 설계</b>(SRP/캡슐화/다형성)와 매니저 구조</li>
+  <li><b>충돌 감지/시간기반 업데이트</b>(deltaTime)</li>
+  <li><b>리소스/메모리 관리</b>(중앙집중 캐싱, 해제 규칙)</li>
+</ul>
+<p><a href="#top">⬆ Back to top</a></p>
+
+<hr/>
+
+<!-- Full Detail (merged long content) -->
+<h2 id="full">11) 📚 원문 상세 (전체 본문, 접기/펼치기)</h2>
+<details open>
+  <summary><b>클릭하여 접기/펼치기</b> — 기술 스택/설계/패턴/충돌/씬/빌드 상세 포함</summary>
+  <br/>
+
+  <!-- 사용 기술 스택 -->
+  <h3 id="full-stack">A. 사용 기술 스택</h3>
+  <ul>
+    <li><b>언어</b>: C++ (표준 C++17 준수). 메모리 관리 등 대부분을 수동으로 처리하여 퍼포먼스와 저수준 제어에 집중.</li>
+    <li><b>플랫폼 &amp; API</b>: Win32 API 기반 개발. 윈도우 생성, 메시지 루프, GDI 2D 렌더링, 키보드 입력(예: <code>WM_KEYDOWN</code>), 타이머, 더블 버퍼링 등 직접 구현.</li>
+    <li><b>그래픽</b>: <b>GDI</b>(Graphics Device Interface)로 2D 블리팅 및 그리기. <code>BitBlt</code>로 백버퍼에 스프라이트를 그린 후 화면에 출력하는 더블 버퍼링 (DirectX/OpenGL 미사용).</li>
+    <li><b>오디오</b>: WinAPI 멀티미디어 API(<code>PlaySound</code>, MCI)로 WAV 재생. 외부 사운드 엔진 없이 Windows 기본 함수 사용.</li>
+    <li><b>IDE &amp; 빌드</b>: Visual Studio 2019/2022. Win32 (x86) Debug/Release 구성으로 Windows 실행 파일(.exe) 생성.</li>
+  </ul>
+
+  <!-- 객체지향 설계 분석 -->
+  <h3 id="full-oop">B. 객체지향 설계 분석</h3>
+  <ul>
+    <li><b>클래스 계층 구조</b>: <code>GameObject</code> 추상 기반(위치/속도/충돌 공통) ← <code>Player</code>, <code>Enemy</code>, <code>Bullet</code> 등 상속. 다형성으로 일관된 업데이트/렌더링.</li>
+    <li><b>캡슐화</b>: 멤버는 <code>private</code> 중심, 게터/세터 또는 퍼블릭 메서드로만 접근. 예) <code>Player::TakeDamage(int)</code>.</li>
+    <li><b>SRP</b>: <code>Player</code>(이동/공격), <code>Enemy</code>(AI), <code>SceneManager</code>(화면 전환), <code>GameManager</code>(게임 전체 흐름) 등 단일 책임.</li>
+    <li><b>추상화</b>: <code>Scene</code> 추상 클래스로 상태 전환 로직을 종류와 무관하게 동작. <code>Enemy</code>는 하위 파생형으로 패턴 확장.</li>
+    <li>요약: WinAPI 호출을 C++ 메서드로 캡슐화, 매니저 구조/패턴으로 전역 상태와 전이를 효율 처리.</li>
+  </ul>
+
+  <!-- 주요 클래스 역할 -->
+  <h3 id="full-classes">C. 주요 클래스 역할 설명</h3>
+  <ul>
+    <li><b>GameManager</b>: 싱글톤. 윈도우 초기화, 게임 루프, 전역 시간/설정, 리소스 로딩/종료 관리 (<code>Init()</code>, <code>Run()</code>).</li>
+    <li><b>SceneManager</b>: 싱글톤. 활성 <code>Scene*</code> 보관, <code>ChangeScene(SceneID)</code>, 루프 내 <code>Update/Render</code> 위임.</li>
+    <li><b>Scene</b> (추상): <code>Update()</code>, <code>Render()</code>, <code>OnEnter()</code>, <code>OnExit()</code> 규약.<br/>
+      <ul>
+        <li><b>MenuScene</b>: 시작 화면/입력 → GameScene 전환.</li>
+        <li><b>GameScene</b>: 플레이/적/탄환 생성 및 관리, 조건 시 GameOver 등으로 전환.</li>
+      </ul>
+    </li>
+    <li><b>Player</b>: 입력 처리, 이동/공격, HP/속도/공격력/방향 상태, 충돌 시 <code>TakeDamage()</code>.</li>
+    <li><b>Enemy</b>: 추적형/발사형 등 AI 구현, 피격/체력 0 시 제거.</li>
+    <li><b>Bullet (Tear)</b>: 위치/속도/공격력, 경계 외/충돌 시 소멸.</li>
+    <li><b>ResourceManager</b>: 이미지/사운드 중앙 관리(맵 캐싱). <code>LoadImage/GetImage</code> 등. 종료 시 일괄 해제.</li>
+    <li><b>Utils/Math</b>: 충돌/거리/각도/난수/보간/타이머 등 공용 유틸.</li>
+    <li>(선택) <b>InputManager</b>, <b>UIManager</b>: 입력 상태/HP 하트·점수 UI 등.</li>
+  </ul>
+
+  <!-- 리소스 관리 -->
+  <h3 id="full-res">D. 리소스 관리 방식</h3>
+  <ul>
+    <li><b>이미지 로딩</b>: 시작/씬 초기화 시 <code>LoadImage/LoadBitmap</code>로 <code>HBITMAP</code> 로드→맵 캐싱→재사용.</li>
+    <li><b>사운드</b>: 효과음 즉시 재생(<code>PlaySound</code>), BGM 루프(MCI). 키-리소스 매핑으로 호출 간소화.</li>
+    <li><b>해제</b>: 종료 시 <code>DeleteObject</code>, <code>PlaySound(NULL,...)</code> 등으로 누수 방지. 백버퍼 DC/비트맵 재사용 후 해제.</li>
+    <li><b>의존 역전</b>: 오브젝트는 파일을 직접 로드하지 않고 매니저에서 핸들을 받아 사용.</li>
+  </ul>
+
+  <!-- 디자인 패턴 -->
+  <h3 id="full-patterns">E. 사용한 디자인 패턴</h3>
+  <ul>
+    <li><b>싱글톤</b>: Game/Scene/Resource Manager 등 전역 관리.</li>
+    <li><b>상태(State)</b>: <code>Scene</code> 추상 + SceneManager로 메뉴/플레이/오버 전환.</li>
+    <li><b>프로토타입</b> (&amp; 풀링): 적/탄환 반복 생성 시 복제 기반 최적화.</li>
+    <li>(확장) 옵저버: HP 변화 이벤트→UI 반영. 팩토리: ID/문자열로 객체 생성.</li>
+  </ul>
+
+  <!-- 충돌/수학 유틸 (상세) -->
+  <h3 id="full-collision">F. 충돌 처리 &amp; 수학 유틸리티 구성</h3>
+  <ul>
+    <li><b>충돌</b>: AABB 기본, 일부 원형 판정. 빈번 호출 대비 활성 객체만 검사, 삭제 마킹 후 프레임 말 정리.</li>
+    <li><b>벡터/수학</b>: <code>Vector2</code> 연산, 각도→단위 벡터, 거리/보간/Clamp/경계 체크.</li>
+    <li><b>난수</b>: C++ <code>&lt;random&gt;</code> 유틸로 드랍/스폰 등 확률 처리.</li>
+    <li><b>타이머</b>: <code>QueryPerformanceCounter</code> 기반 <code>deltaTime</code>으로 프레임 독립 이동.</li>
+  </ul>
+
+  <!-- 씬 관리 -->
+  <h3 id="full-scenes">G. 씬 관리 방식 및 전환 처리</h3>
+  <ol>
+    <li><b>구성</b>: <code>Scene</code> 추상 + <code>MenuScene</code>, <code>GameScene</code> (+<i>GameOver/Pause</i> 확장 가능).</li>
+    <li><b>전환</b>: <code>ChangeScene()</code> → <code>OnExit()</code> → 삭제 → 새 씬 생성 → <code>OnEnter()</code> → 포인터 교체.</li>
+    <li><b>루프 연동</b>: <code>Update/Render</code> 위임, 필요 시 프레임 보정/Sleep.</li>
+    <li><b>안정성</b>: 연속 전환 방지 플래그, 스택형 Pause 확장 가능.</li>
+  </ol>
+
+  <!-- 스크린샷 (설명 자리) -->
+  <h3 id="full-screens">H. 스크린샷</h3>
+  <p>주인공/적/UI 요소 포함 예시 화면. (상단 이미지 참고 / 추가 샷 가능)</p>
+
+  <!-- 실행 상세 -->
+  <h3 id="full-run">I. 빌드 및 실행 방법 (상세)</h3>
+  <ol>
+    <li><b>소스 받기</b>: 저장소를 클론하거나 ZIP 다운로드.</li>
+  </ol>
+  <pre><code>bash
 git clone https://github.com/jaeseung9/WinAPI_Isaac_Project.git
+</code></pre>
+  <ol start="2">
+    <li><b>솔루션 열기</b>: Visual Studio 2019+에서 <code>WinAPI_Isaac_Project.sln</code> 오픈.</li>
+    <li><b>환경</b>: Win10 SDK 자동 설정 권장.</li>
+    <li><b>구성/플랫폼</b>: <b>Debug</b> / <b>Win32(x86)</b> 권장 (Release 선택 가능).</li>
+    <li><b>빌드/실행</b>: <b>Build</b> → <b>F5</b> 또는 출력 폴더 .exe 실행.</li>
+    <li><b>종료</b>: 창 닫기([X]) 또는 인게임 Exit. 디버그 모드에서 누수 경고 없으면 해제 정상.</li>
+    <li><b>주의</b>: Windows 전용. WAV 코덱 기본 제공. x64 OS에서도 x86 실행 정상.</li>
+  </ol>
 
-
-또는 GitHub 페이지에서 Code 다운로드를 통해 ZIP 파일을 추출합니다.
-
-Visual Studio로 열기: Visual Studio 2019 이상에서 WinAPI_Isaac_Project.sln 솔루션 파일을 엽니다.
-
-만약 솔루션을 열 때 Windows SDK 경로 등 환경에 맞지 않는 경우, VS가 자동으로 업데이트하거나 경로를 수정해줍니다. (대부분 기본 Win10 SDK로 빌드됨)
-
-빌드 구성 확인: 상단 툴바에서 Solution Configurations가 Debug인지 확인하고, Solution Platforms는 Win32(또는 x86)로 설정되어 있는지 확인합니다. (Release 빌드로 실행하려면 Release로 변경 가능)
-
-프로젝트 빌드: 솔루션 탐색기에서 프로젝트를 마우스 오른쪽 클릭하고 **빌드(Build)**를 선택합니다. 또는 메뉴에서 빌드 -> 솔루션 빌드를 실행합니다. 컴파일이 시작되며, 성공적으로 끝나면 Debug/WinAPI_Isaac_Project.exe 실행 파일이 생성됩니다.
-
-실행: 빌드 후 Visual Studio에서 로컬 Windows 디버거 시작(F5) 버튼을 눌러 프로그램을 실행하거나, 빌드 출력 폴더에서 WinAPI_Isaac_Project.exe를 더블클릭하여 실행합니다.
-
-프로그램을 실행하면 Windows 창이 생성되고 게임이 바로 시작됩니다. 키보드로 플레이어를 조작하며 게임을 즐길 수 있습니다. (기본 조작: 방향키 또는 WASD 이동, 스페이스바 공격 등 README 또는 인게임 안내 참고)
-
-종료: 게임 창의 닫기 버튼([X])을 누르거나, 게임 내 메뉴에서 Exit을 선택하면 안전하게 창이 닫히며 프로그램이 종료됩니다. 디버그 모드에서는 Visual Studio 출력 창에 메모리 누수 정보가 나타나지 않으면 리소스가 잘 해제된 것입니다.
-
-주의사항: WinAPI 기반 실행 파일이므로 Windows 운영체제에서만 동작합니다. (테스트는 Windows 10 환경에서 완료) 실행에 별도의 DLL이나 의존성은 필요하지 않지만, 사운드 재생을 위해 WAV 코덱 지원이 필요하며, 일반적인 Windows 환경에서는 기본 제공됩니다. 또한 Visual Studio로 빌드할 때 플랫폼이 컴퓨터와 맞지 않으면 (예: 64-bit OS에서 x86 빌드)도 호환 모드로 잘 실행되니 기본 설정을 권장합니다.
-
-
+  <p><a href="#top">⬆ Back to top</a></p>
+</details>
