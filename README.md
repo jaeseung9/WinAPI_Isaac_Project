@@ -36,7 +36,7 @@
   <li><a href="#design">설계 개요 (요약)</a></li>
   <li><a href="#collision">충돌 & 수학 유틸 (요약)</a></li>
   <li><a href="#learned">학습 내용 (요약)</a></li>
-  <li><a href="#full">📚 원문 상세 (전체 본문, 접기/펼치기)</a></li>
+  <li><a href="#full">📚 상세 내용 (전체 본문, 접기/펼치기)</a></li>
 </ol>
 <p><a href="#top">⬆ Back to top</a></p>
 
@@ -202,7 +202,7 @@ git clone https://github.com/yourusername/WinAPI_Isaac_Project.git
 <hr/>
 
 <!-- Full Detail (merged long content) -->
-<h2 id="full">11) 📚 원문 상세 (전체 본문, 접기/펼치기)</h2>
+<h2 id="full">11) 📚 상세 내용 (전체 본문, 접기/펼치기)</h2>
 <details open>
   <summary><b>클릭하여 접기/펼치기</b> — 기술 스택/설계/패턴/충돌/씬/빌드 상세 포함</summary>
   <br/>
