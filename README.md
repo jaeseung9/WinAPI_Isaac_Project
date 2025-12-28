@@ -1,5 +1,51 @@
 <div id="top"></div>
 
+<!-- ──────────────────────────────────────────────────────────────────────────────
+  Project Summary
+──────────────────────────────────────────────────────────────────────────────── -->
+<h2>📌 C++ WinAPI: 2D 아이작 모작 (WinAPI Isaac Project)</h2>
+
+<ul>
+  <li><b>개발 인원</b>: 1명</li>
+  <li><b>개발 기간</b>: 2023.01.01 ~ 2023.02.01</li>
+  <li>
+    🔗 <b>포트폴리오 GitHub</b>:
+    <a href="https://github.com/jaeseung9/WinAPI_Isaac_Project" target="_blank" rel="noreferrer">
+      https://github.com/jaeseung9/WinAPI_Isaac_Project
+    </a>
+  </li>
+  <li>
+    🔗 <b>포트폴리오 Project Overview</b>:
+    <a href="https://seungcoding.tistory.com/83" target="_blank" rel="noreferrer">
+      https://seungcoding.tistory.com/83
+    </a>
+  </li>
+  <li>
+    🔗 <b>시연 영상</b>:
+    <a href="https://youtu.be/BAIw8pGOYqg?si=Ogl8NDcPM4WBSVjN" target="_blank" rel="noreferrer">
+      https://youtu.be/BAIw8pGOYqg?si=Ogl8NDcPM4WBSVjN
+    </a>
+  </li>
+</ul>
+
+<h3>✅ 주요 개발 내용</h3>
+<ul>
+  <li>C++과 WinAPI를 활용해 2D 게임 <b>‘아이작’ 모작</b>을 구현한 개인 프로젝트</li>
+  <li><code>GameManager</code> / <code>SceneManager</code> / <code>ObjectManager</code> 중심의 <b>객체지향 구조</b> 설계</li>
+  <li><code>Player</code>, <code>Monster</code>, <code>Bullet</code>, <code>Room</code> 등을 클래스로 분리하고 <b>이동·충돌·랜덤 맵 생성</b> 로직 구현</li>
+  <li>WinAPI의 <b>GDI 기반 스프라이트 렌더링</b>, 애니메이션 처리 및 <b>FPS Lock</b>을 통한 프레임 제어</li>
+</ul>
+
+<h3>📚 학습 및 성과</h3>
+<ul>
+  <li><b>객체지향 설계 원칙</b>(OOP, SOLID)을 실습하며 클래스 기반 게임 구조를 설계·구현</li>
+  <li><code>SceneManager</code> 패턴을 통한 <b>상태 전환</b> 및 씬 간 메모리/자원 관리 방식 학습</li>
+  <li><b>포인터와 동적 할당</b>, 수명 관리 등 C++ 메모리 제어 기법을 실전 프로젝트에서 적용</li>
+  <li>WinAPI의 <b>GDI 그래픽 처리</b>와 <b>이벤트 루프 구조</b>를 직접 구현하며 게임 루프의 전체 흐름 이해</li>
+</ul>
+
+<hr/>
+
 <h1 align="center">🎮 WinAPI Isaac Project — 2D Roguelike (C++/Win32)</h1>
 <p align="center">
   <b>Win32 API + GDI</b>로 구현한 더블버퍼링 2D 로그라이크 액션 게임<br/>
