@@ -15,12 +15,6 @@
     </a>
   </li>
   <li>
-    🔗 <b>포트폴리오 Project Overview</b>:
-    <a href="https://seungcoding.tistory.com/83" target="_blank" rel="noreferrer">
-      https://seungcoding.tistory.com/83
-    </a>
-  </li>
-  <li>
     🔗 <b>시연 영상</b>:
     <a href="https://youtu.be/BAIw8pGOYqg?si=Ogl8NDcPM4WBSVjN" target="_blank" rel="noreferrer">
       https://youtu.be/BAIw8pGOYqg?si=Ogl8NDcPM4WBSVjN
